@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  items-api:
+    build:
+      context: ./items
+      dockerfile: Dockerfile
+    container_name: items-api
+    ports:
+      - "8080:8080"
+    networks:
+      - meli-net
+
+  melidiscount-api:
+    build:
+      context: ./melidiscount
+      dockerfile: Dockerfile
+    container_name: melidiscount-api
+    depends_on:
+      - items-api
+    environment:
+      EXTERNAL_ITEMS_SERVICE_BASE_URL: "http://items-api:8080/items"
+    ports:
+      - "9090:9090"
+    networks:
+      - meli-net
+
+networks:
+  meli-net:
+    driver: bridge
